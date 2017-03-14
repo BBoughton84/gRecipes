@@ -11,7 +11,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 
 var corsOptions = {
-  origin: 'https://sugs-grecipes.firebaseapp.com',
+  origin: ['localhost', 'https://sugs-grecipes.firebaseapp.com'],
   optionsSuccessStatus:200
 }
 

@@ -1,7 +1,20 @@
 const router = require('express').Router()
 const knex = require('../db/knex.js')
 
-// router.get('/author/')
+router.get('/author', (req, res) => {
+  knex('author')
+    .then(result => [
+      res.send(result)
+    ])
+})
+
+router.get('/author/:id', (req, res) => {
+  var id = req.params.id
+  knex('author').where('id', id)
+    .then(result => [
+      res.send(result)
+    ])
+})
 
 router.get('/', (req, res) => {
   knex('recipe')
