@@ -11,7 +11,7 @@ router.get('/all/:id', (req, res) => {
 
 router.get('/specific/:id', (req, res) => {
   var reviewId = req.params.id
-  knex('review').where('review_id', reviewId)
+  knex('review').where('id', reviewId)
     .then(result => {
       res.send(result)
     })
