@@ -46,5 +46,24 @@ router.post('/', (req, res) => {
     })
 })
 
+router.patch('/', (req, res) => {
+  var commentChange = req.body.body
+  var reviewToEdit = req.body.review_id
+  var ratingEdit = req.body.rating
+
+  knex('review').where('id', reviewToEdit).update({body:commentChange, rating:ratingEdit})
+    .then(result => {
+      res.send(200)
+    })
+})
+
+router.delete('/:id', (req, res) => {
+  var itemDelete = req.params.id
+  knex('review').where('id', itemDelete).del()
+    .then(result => {
+      res.send(200)
+    })
+})
+
 
 module.exports = router

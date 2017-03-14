@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const knex = require('../db/knex.js')
 
+// router.get('/author/')
+
 router.get('/', (req, res) => {
   knex('recipe')
     .then(result => {
@@ -11,6 +13,14 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   var recipeId = req.params.id
   knex('recipe').where('id', recipeId)
+    .then(result => {
+      res.send(result)
+    })
+})
+
+router.get('/step/:id', (req, res) => {
+  var stepId = req.params.id
+  knex('step').where('recipe_id', stepId)
     .then(result => {
       res.send(result)
     })
@@ -40,6 +50,14 @@ router.post('/', (req, res) => {
               res.send(sendingBackNewRecipeNewUser)
             })
         })
+    })
+})
+
+router.delete('/:id', (req, res) => {
+  var itemtoDelete = req.params.id
+  knex('recipe').where('id', itemtoDelete).del()
+    .then(result => {
+      res.send(200)
     })
 })
 
