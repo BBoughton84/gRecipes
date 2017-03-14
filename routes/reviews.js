@@ -2,8 +2,8 @@ const router = require('express').Router()
 const knex = require('../db/knex.js')
 
 router.get('/all/:id', (req, res) => {
-  var reviewId = req.params.id
-  knex('review').where('recipe_id', reviewId)
+  var recipeId = req.params.id
+  knex('review').where('recipe_id', recipeId)
     .then(result => {
       res.send(result)
     })
