@@ -1,13 +1,26 @@
 
 exports.seed = function(knex, Promise) {
-  // Deletes ALL existing entries
-  return knex('table_name').del()
+  return knex('recipe').del()
     .then(function () {
-      // Inserts seed entries
-      return knex('table_name').insert([
-        {id: 1, colName: 'rowValue1'},
-        {id: 2, colName: 'rowValue2'},
-        {id: 3, colName: 'rowValue3'}
-      ]);
-    });
-};
+      return knex('recipe').insert([
+        {
+          name: 'Chicken Cordone-Blue',
+          image_URL: 'wwww.yougolookitup.com',
+          description: 'blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah',
+          author_id: knex('author').where('id', 1).select('id')
+        },
+        {
+          name: 'Bacon Wrapped Filet',
+          image_URL: 'www.googleit.com',
+          description: 'blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah',
+          author_id: knex('author').where('id', 2).select('id')
+        },
+        {
+          name: 'Best Prime Rib Ever',
+          image_URL: 'www.callsomeoneelse.com',
+          description: 'blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah',
+          author_id: knex('author').where('id', 3).select('id')
+        }
+      ])
+    })
+}

@@ -6,4 +6,4 @@ exports.seed = function(knex, Promise) {
         {name: 'BS Recipes'}
       ])
     })
-};
+}
