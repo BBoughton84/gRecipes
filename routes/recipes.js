@@ -49,7 +49,7 @@ router.get('/:id', (req, res) => {
 
 router.get('/step/:id', (req, res) => {
   var stepId = req.params.id
-  knex('step').where('recipe_id', stepId)
+  knex('step').orderBy('order_number', 'asc').where('recipe_id', stepId)
     .then(result => {
       res.send(result)
     })
@@ -67,7 +67,15 @@ router.post('/', (req, res) => {
       if (result[0].name == authorName) {
         knex('recipe').insert({name:recipeName, author_id:result[0].id, description:recipeDesc, image_URL:imageURL}).returning(['id', 'name', 'author_id', 'description', 'image_URL'])
           .then(newRecipe => {
-                res.send(newRecipe)
+            var newItemAdded = newRecipe
+            var stepPromises = []
+            for (var i = 0; i < stepArray.length; i++) {
+                stepPromises.push(knex('step').insert({recipe_id:newItemAdded[0].id, body:stepArray[i], order_number:i+1}))
+            }
+            Promise.all(stepPromises)
+              .then(result => {
+                res.send(newItemAdded)
+              })
           })
       }
     })
@@ -76,7 +84,15 @@ router.post('/', (req, res) => {
         .then(result => {
           knex('recipe').insert({name:recipeName, author_id:result[0], description:recipeDesc, image_URL:imageURL}).returning(['id', 'name', 'author_id', 'description', 'image_URL'])
             .then(sendingBackNewRecipeNewUser => {
-              res.send(sendingBackNewRecipeNewUser)
+              var newItemAdded = sendingBackNewRecipeNewUser
+              var stepPromises = []
+              for (var i = 0; i < stepArray.length; i++) {
+                  stepPromises.push(knex('step').insert({recipe_id:newItemAdded[0].id, body:stepArray[i], order_number:i+1}))
+              }
+              Promise.all(stepPromises)
+                .then(result => {
+                  res.send(newItemAdded)
+                })
             })
         })
     })
