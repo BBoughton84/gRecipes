@@ -123,8 +123,9 @@ router.patch('/', (req, res) => {
       var newItemAdded = result
       var stepPromises = []
       for (var i = 0; i < stepArray.length; i++) {
-          stepPromises.push(knex('step').where('recipe_id', patchId).select('order_number', (i+1)).update({recipe_id:patchId, body:stepArray[i], order_number:i+1}))
-          // knex('step').where('recipe_id', patchId).select('order_number', (i+1)).update({recipe_id:patchId, body:stepArray[i], order_number:i+1})
+          stepPromises.push(knex('step').where({
+            recipe_id: patchId,
+            order_number: i + 1}).update({recipe_id:patchId, body:stepArray[i], order_number:i+1}))
         }
       Promise.all(stepPromises)
         .then(result => {
