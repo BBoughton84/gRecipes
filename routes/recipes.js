@@ -35,12 +35,19 @@ router.get('/ri/:id', (req, res) => {
 router.get('/:id', (req, res) => {
   var recipeId = req.params.id
   var recipeHolder = []
+  var nameHolder
+  var recipeRating =[]
   knex('recipe').where('id', recipeId)
     .then(result => {
       recipeHolder = result
+      nameHolderId = result[0]["author_id"]
       knex('review').where('recipe_id', recipeId).avg('rating')
         .then(rating => {
-          res.send(recipeHolder.concat(rating))
+          recipeRating = recipeHolder.concat(rating)
+          knex('author').where('id', nameHolderId)
+            .then(name => {
+              res.send(recipeRating.concat(name))
+            })
         })
     })
 })
@@ -116,10 +123,10 @@ router.patch('/', (req, res) => {
       var newItemAdded = result
       var stepPromises = []
       for (var i = 0; i < stepArray.length; i++) {
-          // stepPromises.push()
-          knex('step').where('recipe_id', patchId).select('order_number', (i+1)).update({recipe_id:patchId, body:stepArray[i], order_number:i+1})
+          stepPromises.push(knex('step').where('recipe_id', patchId).select('order_number', (i+1)).update({recipe_id:patchId, body:stepArray[i], order_number:i+1}))
+          // knex('step').where('recipe_id', patchId).select('order_number', (i+1)).update({recipe_id:patchId, body:stepArray[i], order_number:i+1})
         }
-      Promise.all()
+      Promise.all(stepPromises)
         .then(result => {
           res.sendStatus(200).send(newItemAdded)
           // res.send(newItemAdded)
