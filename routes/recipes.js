@@ -100,11 +100,27 @@ router.post('/', (req, res) => {
 
 router.patch('/', (req, res) => {
   var patchId = req.body.recipe_id
-  var patchBody = req.body.body
+  var patchBody = req.body.description
   var patchTitle = req.body.name
   var patchImg = req.body.image_URL
+  var stepArray = req.body.stepArray
+
 
   knex('recipe').where('id', patchId).update({name:patchTitle, description:patchBody, image_URL:patchImg})
+    .then(result => {
+      var newItemAdded = result
+      var stepPromises = []
+      for (var i = 0; i < stepArray.length; i++) {
+          // stepPromises.push()
+          knex('step').where('recipe_id', patchId).select('order_number', (i+1)).update({recipe_id:patchId, body:stepArray[i], order_number:i+1})
+        }
+      Promise.all()
+        .then(result => {
+          res.sendStatus(200).send(newItemAdded)
+          // res.send(newItemAdded)
+        })
+
+    })
 
 })
 

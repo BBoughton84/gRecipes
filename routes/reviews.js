@@ -17,6 +17,14 @@ router.get('/specific/:id', (req, res) => {
     })
 })
 
+router.get('/average/:id', (req, res) => {
+  var recipeId = req.params.id
+  knex('review').where('recipe_id', recipeId).avg('rating')
+    .then(result => {
+      res.send(result)
+    })
+})
+
 router.post('/', (req, res) => {
   var postId = req.body.recipe_id
   var postReview = req.body.body
