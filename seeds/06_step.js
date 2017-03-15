@@ -57,6 +57,36 @@ exports.seed = function(knex, Promise) {
           recipe_id: knex('recipe').where('id', 2).select('id'),
           body: 'add salt',
           order_number: 6
+        },
+        {
+          recipe_id: knex('recipe').where('id', 3).select('id'),
+          body: 'Get bacon and filet ready',
+          order_number: 1
+        },
+        {
+          recipe_id: knex('recipe').where('id', 3).select('id'),
+          body: 'Turn the bbq on to 375',
+          order_number: 2
+        },
+        {
+          recipe_id: knex('recipe').where('id', 3).select('id'),
+          body: 'Wrap filet with bacon strip using a tooth pic',
+          order_number: 3
+        },
+        {
+          recipe_id: knex('recipe').where('id', 3).select('id'),
+          body: 'Sear both sides and turn heat down to 350',
+          order_number: 4
+        },
+        {
+          recipe_id: knex('recipe').where('id', 3).select('id'),
+          body: 'Leave on each side for 7-8 minutes',
+          order_number: 5
+        },
+        {
+          recipe_id: knex('recipe').where('id', 3).select('id'),
+          body: 'Remove from heat and let cool for 5 minutes before eating',
+          order_number: 6
         }
       ])
     })
