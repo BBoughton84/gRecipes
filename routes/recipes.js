@@ -16,6 +16,22 @@ router.get('/author/:id', (req, res) => {
     ])
 })
 
+router.get('/ingredients/:id', (req, res) => {
+  var id = req.params.id
+  knex('ingredient_recipe').where('recipe_id', id)
+    .then(result => {
+      res.send(result)
+    })
+})
+
+router.get('/ri/:id', (req, res) => {
+  var id = req.params.id
+  knex('ingredient_recipe').where('ingredient_id', id)
+    .then(result => {
+      res.send(result)
+    })
+})
+
 router.get('/', (req, res) => {
   knex('recipe')
     .then(result => {
@@ -66,6 +82,16 @@ router.post('/', (req, res) => {
     })
 })
 
+router.patch('/', (req, res) => {
+  var patchId = req.body.recipe_id
+  var patchBody = req.body.body
+  var patchTitle = req.body.name
+  var patchImg = req.body.image_URL
+
+  knex('recipe').where('id', patchId).update({name:patchTitle, description:patchBody, image_URL:patchImg})
+
+})
+
 router.delete('/:id', (req, res) => {
   var itemtoDelete = req.params.id
   knex('recipe').where('id', itemtoDelete).del()
@@ -73,6 +99,8 @@ router.delete('/:id', (req, res) => {
       res.send(200)
     })
 })
+
+
 
 
 
