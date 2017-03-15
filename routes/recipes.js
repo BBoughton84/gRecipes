@@ -32,16 +32,21 @@ router.get('/ri/:id', (req, res) => {
     })
 })
 
-router.get('/', (req, res) => {
-  knex('recipe')
+router.get('/:id', (req, res) => {
+  var recipeId = req.params.id
+  var recipeHolder = []
+  knex('recipe').where('id', recipeId)
     .then(result => {
-      res.send(result)
+      recipeHolder = result
+      knex('review').where('recipe_id', recipeId).avg('rating')
+        .then(rating => {
+          res.send(recipeHolder.concat(rating))
+        })
     })
 })
 
-router.get('/:id', (req, res) => {
-  var recipeId = req.params.id
-  knex('recipe').where('id', recipeId)
+router.get('/', (req, res) => {
+  knex('recipe')
     .then(result => {
       res.send(result)
     })
