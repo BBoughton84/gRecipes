@@ -122,19 +122,37 @@ router.post('/', (req, res) => {
 })
 
 
-// router.post('/ingredients', (req, res) => {
-//   var recipeId = req.body.recipe_id
-//   var ingredientsArray = req.body.ingredients
-//   for (var i = 0; i < ingredientsArray.length; i++) {
-//     console.log(ingredientsArray[i])
-//   }
-//   knex('ingredients')
-//   res.send(200)
-// })
+router.post('/ingredient', (req, res) => {
+  var recipeId = req.body.recipe_id
+  var ingredientName = req.body.name
+  var ingredientUnits = req.body.units
+  var ingredientQuantity = req.body.quantity
 
-// router.patch('/ingredients', (req, res) => {
-//
-// })
+  knex('ingredient').insert({name:ingredientName}).returning('id')
+    .then(result => {
+      var holdsNewId = result[0]
+      knex('ingredient_recipe').insert({ingredient_id:holdsNewId, recipe_id:recipeId, quantity:ingredientQuantity, units:ingredientUnits})
+        .then(nextresult => {
+          res.send(200)
+        })
+    })
+})
+
+router.patch('/ingredientpatch', (req, res) => {
+  var ingredientIdPatch = req.body.ingredient_id
+  var recipeIdPatch = req.body.recipe_id
+  var patchIngredient = req.body.name
+  var patchUnits = req.body.units
+  var patchQuantity = req.body.quantity
+
+  knex('ingredient').where('id', ingredientIdPatch).update({name:patchIngredient})
+    .then(result => {
+      knex('ingredient_recipe').where('ingredient_id', ingredientIdPatch).update({quantity:patchQuantity, units:patchUnits})
+        .then(nextresult => {
+          res.send(200)
+        })
+    })
+})
 
 
 router.patch('/', (req, res) => {
@@ -143,7 +161,6 @@ router.patch('/', (req, res) => {
   var patchTitle = req.body.name
   var patchImg = req.body.image_URL
   var stepArray = req.body.stepArray
-
 
   knex('recipe').where('id', patchId).update({name:patchTitle, description:patchBody, image_URL:patchImg})
     .then(result => {
