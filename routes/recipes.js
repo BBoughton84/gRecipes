@@ -18,9 +18,20 @@ router.get('/author/:id', (req, res) => {
 
 router.get('/ingredients/:id', (req, res) => {
   var id = req.params.id
+  var joinTableHolder = []
+  var ingredientHolder = []
+  var bothItems = []
   knex('ingredient_recipe').where('recipe_id', id)
     .then(result => {
-      res.send(result)
+      joinTableHolder = result
+      for (var i = 0; i < result.length; i++) {
+        ingredientHolder.push(knex('ingredient').where('id', result[i]["ingredient_id"]).first())
+      }
+      Promise.all([Promise.all(ingredientHolder), joinTableHolder])
+        .then(result => {
+          res.send(result)
+
+        })
     })
 })
 
