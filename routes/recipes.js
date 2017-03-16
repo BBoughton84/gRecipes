@@ -83,22 +83,13 @@ router.post('/', (req, res) => {
   var recipeDesc = req.body.description
   var authorName = req.body.author_name
   var imageURL = req.body.image_URL
-  var stepArray = req.body.stepArray
 
   knex('author').where('name', authorName)
     .then(result => {
       if (result[0].name == authorName) {
         knex('recipe').insert({name:recipeName, author_id:result[0].id, description:recipeDesc, image_URL:imageURL}).returning(['id', 'name', 'author_id', 'description', 'image_URL'])
-          .then(newRecipe => {
-            var newItemAdded = newRecipe
-            var stepPromises = []
-            for (var i = 0; i < stepArray.length; i++) {
-                stepPromises.push(knex('step').insert({recipe_id:newItemAdded[0].id, body:stepArray[i], order_number:i+1}))
-            }
-            Promise.all(stepPromises)
-              .then(result => {
-                res.send(newItemAdded)
-              })
+          .then(result => {
+            res.send(result)
           })
       }
     })
@@ -106,21 +97,23 @@ router.post('/', (req, res) => {
       knex('author').insert({name:authorName}).returning('id')
         .then(result => {
           knex('recipe').insert({name:recipeName, author_id:result[0], description:recipeDesc, image_URL:imageURL}).returning(['id', 'name', 'author_id', 'description', 'image_URL'])
-            .then(sendingBackNewRecipeNewUser => {
-              var newItemAdded = sendingBackNewRecipeNewUser
-              var stepPromises = []
-              for (var i = 0; i < stepArray.length; i++) {
-                  stepPromises.push(knex('step').insert({recipe_id:newItemAdded[0].id, body:stepArray[i], order_number:i+1}))
-              }
-              Promise.all(stepPromises)
-                .then(result => {
-                  res.send(newItemAdded)
-                })
+            .then(result => {
+              res.send(result)
             })
         })
     })
 })
 
+router.post('/step', (req, res) => {
+  var recipeId = req.body.recipe_id
+  var stepBody = req.body.body
+  var orderNum = req.body.order_number
+
+  knex('step').insert({recipe_id:recipeId, body:stepBody, order_number:orderNum})
+    .then(result => {
+      res.send(200)
+    })
+})
 
 router.post('/ingredient', (req, res) => {
   var recipeId = req.body.recipe_id
@@ -154,29 +147,29 @@ router.patch('/ingredientpatch', (req, res) => {
     })
 })
 
+router.patch('/step', (req, res) => {
+  var stepId = req.body.id
+  var stepBody = req.body.body
+  var orderNum = req.body.order_number
+
+  knex('step').where('id', stepId).update({body:stepBody, order_number:orderNum})
+    .then(result => {
+      res.send(200)
+    })
+})
 
 router.patch('/', (req, res) => {
   var patchId = req.body.recipe_id
   var patchBody = req.body.description
   var patchTitle = req.body.name
   var patchImg = req.body.image_URL
-  var stepArray = req.body.stepArray
 
   knex('recipe').where('id', patchId).update({name:patchTitle, description:patchBody, image_URL:patchImg})
     .then(result => {
-      var newItemAdded = result
-      var stepPromises = []
-      for (var i = 0; i < stepArray.length; i++) {
-          stepPromises.push(knex('step').where({
-            recipe_id: patchId,
-            order_number: i + 1}).update({recipe_id:patchId, body:stepArray[i], order_number:i+1}))
-        }
-      Promise.all(stepPromises)
-        .then(result => {
-          res.sendStatus(200).send(newItemAdded)
-        })
+          res.send(200)
     })
 })
+
 
 router.delete('/:id', (req, res) => {
   var itemtoDelete = req.params.id
