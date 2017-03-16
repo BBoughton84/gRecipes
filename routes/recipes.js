@@ -121,6 +121,22 @@ router.post('/', (req, res) => {
     })
 })
 
+
+// router.post('/ingredients', (req, res) => {
+//   var recipeId = req.body.recipe_id
+//   var ingredientsArray = req.body.ingredients
+//   for (var i = 0; i < ingredientsArray.length; i++) {
+//     console.log(ingredientsArray[i])
+//   }
+//   knex('ingredients')
+//   res.send(200)
+// })
+
+// router.patch('/ingredients', (req, res) => {
+//
+// })
+
+
 router.patch('/', (req, res) => {
   var patchId = req.body.recipe_id
   var patchBody = req.body.description
@@ -141,11 +157,8 @@ router.patch('/', (req, res) => {
       Promise.all(stepPromises)
         .then(result => {
           res.sendStatus(200).send(newItemAdded)
-          // res.send(newItemAdded)
         })
-
     })
-
 })
 
 router.delete('/:id', (req, res) => {
@@ -156,7 +169,25 @@ router.delete('/:id', (req, res) => {
     })
 })
 
+router.delete('/ingredient/:id', (req, res) => {
+  var ingredientToDelete = req.params.id
+  knex('ingredient_recipe').where('ingredient_id', ingredientToDelete).del()
+    .then(result => {
+      knex('ingredient').where('id', ingredientToDelete).del()
+        .then(newresult => {
+          res.send(200)
+        })
+    })
+})
 
+router.delete('/step/:id', (req, res) => {
+  var stepToDelete = req.params.id
+  knex('step').where('id', stepToDelete).del()
+    .then(result => {
+      console.log(result)
+      res.send(200)
+    })
+})
 
 
 
